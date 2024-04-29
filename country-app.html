@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Country App</title>
+
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #6d99c7;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+}
+
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.countryCard {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin: 10px;
+    padding: 10px;
+    width: 300px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.countryCard img {
+    width: 100%;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.countryCard h2 {
+    margin: 0;
+}
+
+.countryDetail {
+    margin-bottom: 5px;
+}
+
+#sortButton {
+    margin-bottom: 20px;
+}
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Country App</h1>
+        <button id="sortButton">Sort by Population</button>
+    </header>
+    <div id="countryContainer" class="container"></div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+    const sortButton = document.getElementById("sortButton");
+    sortButton.addEventListener("click", sortCountriesByPopulation);
+
+    fetchCountries();
+});
+
+function fetchCountries() {
+    fetch("https://dbioz2ek0e.execute-api.ap-south-1.amazonaws.com/mockapi/get-countries")
+        .then(response => response.json())
+        .then(data => {
+            displayCountries(data);
+        })
+        .catch(error => {
+            console.error("Error fetching countries:", error);
+        });
+}
+
+function displayCountries(countries) {
+    const countryContainer = document.getElementById("countryContainer");
+    countryContainer.innerHTML = "";
+
+    countries.forEach(country => {
+        const countryCard = document.createElement("div");
+        countryCard.classList.add("countryCard");
+
+        const countryFlag = document.createElement("img");
+        countryFlag.src = country.flag;
+        countryFlag.alt = `${country.name} Flag`;
+
+        const countryName = document.createElement("h2");
+        countryName.textContent = country.name;
+
+        const countryDetails = document.createElement("div");
+        countryDetails.classList.add("countryDetail");
+        countryDetails.textContent = `Population: ${country.population}`;
+
+        countryCard.appendChild(countryFlag);
+        countryCard.appendChild(countryName);
+        countryCard.appendChild(countryDetails);
+
+        countryContainer.appendChild(countryCard);
+    });
+}
+
+function sortCountriesByPopulation() {
+    fetch("https://dbioz2ek0e.execute-api.ap-south-1.amazonaws.com/mockapi/get-countries?sort=population&order=desc")
+        .then(response => response.json())
+        .then(data => {
+            displayCountries(data);
+        })
+        .catch(error => {
+            console.error("Error sorting countries:", error);
+        });
+}
+
+    </script>
+</body>
+</html>
